@@ -209,6 +209,13 @@ class XMLHandler {
       }
 
       this.mapObject(element, nsContext, descriptor, val, attrs);
+
+      if(typeof val !== "undefined" && val !== null && typeof val[this.options.xmlKey] !== "undefined") {
+        val = val[this.options.xmlKey];
+        val = toXmlDateOrTime(descriptor, val);
+        element.raw(val);
+      }
+
       if (nameSpaceContextCreated) {
         nsContext.popContext();
       }
@@ -321,6 +328,8 @@ class XMLHandler {
       const names = this._sortKeys(val, elementOrder);
       for (let p of names) {
         if (p === this.options.attributesKey)
+          continue;
+        if (p === this.options.xmlKey)
           continue;
 	      let child = val[p];
 	      let childDescriptor = elements[p] || attributes[p];
